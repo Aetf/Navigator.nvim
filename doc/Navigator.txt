@@ -35,6 +35,9 @@ This plugin provides the following commands:
  *NavigatorUp* - Go to upper split/pane
  *NavigatorDown* - Go to down split/pane
  *NavigatorPrevious* - Go to previous split/pane
+ *NavigatorTabNext* - Go to next tab
+ *NavigatorTabPrev* - Go to previous tab
+ *NavigatorTabLast* - Go to last tab
 
 ==============================================================================
 API and Config                                                   *navigator.api*
@@ -58,6 +61,15 @@ Direction                                              *navigator.api.Direction*
         ("j")  Lower Pane
         ("k")  Upper Pane
         ("l")  Right Pane
+
+
+TabDirection                                        *navigator.api.TabDirection*
+    Enum of navigation direction analogous of neovim tab movement
+
+    Variants: ~
+        ("p")  Previous Tab
+        ("n")  Next Tab
+        ("l")  Last Tab
 
 
 Nav.setup({opts})                                          *navigator.api.setup*
@@ -139,6 +151,42 @@ Nav.previous()                                          *navigator.api.previous*
 <
 
 
+Nav.tabnext()                                            *navigator.api.tabnext*
+    Go to next tab
+
+    Usage: ~
+>lua
+        require('Navigator').tabnext()
+
+        -- With keybinding
+        vim.keymap.set({'n', 't'}, '<A-S-n>', require('Navigator').tabnext)
+<
+
+
+Nav.tabprev()                                            *navigator.api.tabprev*
+    Go to previous tab
+
+    Usage: ~
+>lua
+        require('Navigator').tabprev()
+
+        -- With keybinding
+        vim.keymap.set({'n', 't'}, '<A-S-p>', require('Navigator').tabprev)
+<
+
+
+Nav.tablast()                                            *navigator.api.tablast*
+    Go to last tab
+
+    Usage: ~
+>lua
+        require('Navigator').tablast()
+
+        -- With keybinding
+        vim.keymap.set({'n', 't'}, '<A-S-l>', require('Navigator').tablast)
+<
+
+
 ==============================================================================
 Neovim navigator                                                  *navigator.vi*
 
@@ -166,6 +214,16 @@ Vi:navigate({direction})                                 *navigator.vi:navigate*
 
     Parameters: ~
         {direction}  (Direction)  See |navigator.api.Direction|
+
+    Returns: ~
+        (Vi)
+
+
+Vi:change_window({direction})                       *navigator.vi:change_window*
+    Switch window in neovim
+
+    Parameters: ~
+        {direction}  (TabDirection)  See |navigator.api.TabDirection|
 
     Returns: ~
         (Vi)
@@ -214,6 +272,16 @@ Tmux:navigate({direction})                             *navigator.tmux:navigate*
         (Tmux)
 
 
+Tmux:change_window({direction})                   *navigator.tmux:change_window*
+    Switch window in tmux
+
+    Parameters: ~
+        {direction}  (TabDirection)  See |navigator.api.TabDirection|
+
+    Returns: ~
+        (Tmux)
+
+
 ==============================================================================
 WezTerm navigator                                            *navigator.wezterm*
 
@@ -249,6 +317,16 @@ WezTerm:navigate({direction})                       *navigator.wezterm:navigate*
 
     Returns: ~
         (WezTerm)
+
+
+WezTerm:change_window({direction})             *navigator.wezterm:change_window*
+    Switch window in neovim
+
+    Parameters: ~
+        {direction}  (TabDirection)  See |navigator.api.TabDirection|
+
+    Returns: ~
+        (Vi)
 
 
 vim:tw=78:ts=8:noet:ft=help:norl:
