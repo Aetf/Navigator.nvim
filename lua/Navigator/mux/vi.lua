@@ -32,4 +32,18 @@ function Vi:navigate(direction)
     return self
 end
 
+---Switch window in neovim
+---@param direction TabDirection See |navigator.api.TabDirection|
+---@return Vi
+function Vi:change_window(direction)
+    if direction == 'n' then
+        cmd('tabNext')
+    elseif direction == 'p' then
+        cmd('tabprevious')
+    elseif direction == 'l' then
+        -- g<Tab> goes to the last accessed tab
+        cmd('normal! g\t')
+    end
+    return self
+end
 return Vi

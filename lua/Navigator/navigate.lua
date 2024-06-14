@@ -1,4 +1,5 @@
 local A = vim.api
+local F = vim.fn
 local cmd = A.nvim_command
 
 ---State and defaults
@@ -26,6 +27,39 @@ local function load_mux()
         return wezterm
     end
     return require('Navigator.mux.vi'):new()
+end
+
+local function tabcmd(direction)
+    if direction == 'n' then
+        cmd('tabnext')
+    elseif direction == 'p' then
+        cmd('tabprevious')
+    elseif direction == 'l' then
+        -- g<Tab> goes to the last accessed tab
+        cmd('normal! g\t')
+    end
+end
+
+local function maybe_auto_save()
+    local w = N.config.auto_save
+    if w ~= nil then
+        if w == 'current' then
+            local cur_buf = A.nvim_get_current_buf()
+            if F.exists(A.nvim_buf_get_name(cur_buf)) then
+                cmd('update')
+            end
+        end
+
+        if w == 'all' then
+            for _, buf in pairs(A.nvim_list_bufs()) do
+                if A.nvim_buf_is_loaded(buf) and F.exists(A.nvim_buf_get_name(buf)) then
+                    A.nvim_buf_call(buf, function()
+                        cmd('update')
+                    end)
+                end
+            end
+        end
+    end
 end
 
 ---For setting up the plugin with the user provided options
@@ -85,14 +119,33 @@ function N.navigate(direction)
     -- So we can navigate to the mux pane
     if back_to_mux(at_edge) then
         N.config.mux:navigate(direction)
+        maybe_auto_save()
+        N.last_pane = true
+    else
+        N.last_pane = false
+    end
+end
 
-        local save = N.config.auto_save
-        if save == 'current' then
-            cmd('update')
-        elseif save == 'all' then
-            cmd('wall')
-        end
+---For smoothly navigating through neovim tabpages and tmux windows
+---@param direction string
+function N.navi_tab(direction)
+    -- tab nvaivation wraps around in neovim, so we need to check at edge before actually acting
+    -- `nvim_list_tabpages` returns tab handles that are not the same as gettabinfo, which is used by bufferline
+    local tabs = F.gettabinfo()
+    local curr_tab = F.tabpagenr()
+    local at_edge = (curr_tab == tabs[1].tabnr and direction == 'p')
+                    or (curr_tab == tabs[#tabs].tabnr and direction == 'n')
 
+    local tmux_last_pane = direction == 'l' and N.last_pane
+    if not at_edge and not tmux_last_pane then
+        tabcmd(direction)
+        return
+    end
+
+    -- go to tmux instead
+    if back_to_mux(at_edge) then
+        N.config.mux:change_window(direction)
+        maybe_auto_save()
         N.last_pane = true
     else
         N.last_pane = false

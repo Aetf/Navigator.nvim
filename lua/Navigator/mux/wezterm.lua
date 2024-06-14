@@ -49,4 +49,11 @@ function WezTerm:navigate(direction)
     return self
 end
 
+---Switch window in neovim
+---@param direction TabDirection See |navigator.api.TabDirection|
+---@return Vi
+function WezTerm:change_window(direction)
+    return self
+end
+
 return WezTerm

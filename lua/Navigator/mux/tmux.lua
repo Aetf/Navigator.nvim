@@ -59,4 +59,12 @@ function Tmux:navigate(direction)
     return self
 end
 
+---Switch window in tmux
+---@param direction TabDirection See |navigator.api.TabDirection|
+---@return Tmux
+function Tmux:change_window(direction)
+    self.execute(string.format("select-window -%s", direction))
+    return self
+end
+
 return Tmux

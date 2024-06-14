@@ -28,6 +28,9 @@
 --- *NavigatorUp* - Go to upper split/pane
 --- *NavigatorDown* - Go to down split/pane
 --- *NavigatorPrevious* - Go to previous split/pane
+--- *NavigatorTabNext* - Go to next tab
+--- *NavigatorTabPrev* - Go to previous tab
+--- *NavigatorTabLast* - Go to last tab
 ---@brief ]]
 
 ---@mod navigator.api API and Config
@@ -50,6 +53,12 @@ local Nav = {}
 ---| '"j"' # Lower Pane
 ---| '"k"' # Upper Pane
 ---| '"l"' # Right Pane
+
+---Enum of navigation direction analogous of neovim tab movement
+---@alias TabDirection
+---| '"p"' # Previous Tab
+---| '"n"' # Next Tab
+---| '"l"' # Last Tab
 
 ---Configure the plugin
 ---@param opts Config
@@ -120,6 +129,39 @@ end
 ---@usage ]]
 function Nav.previous()
     n.navigate('p')
+end
+
+---Go to next tab
+---@usage [[
+---require('Navigator').tabnext()
+---
+----- With keybinding
+---vim.keymap.set({'n', 't'}, '<A-S-n>', require('Navigator').tabnext)
+---@usage ]]
+function Nav.tabnext()
+    n.navi_tab('n')
+end
+
+---Go to previous tab
+---@usage [[
+---require('Navigator').tabprev()
+---
+----- With keybinding
+---vim.keymap.set({'n', 't'}, '<A-S-p>', require('Navigator').tabprev)
+---@usage ]]
+function Nav.tabprev()
+    n.navi_tab('p')
+end
+
+---Go to last tab
+---@usage [[
+---require('Navigator').tablast()
+---
+----- With keybinding
+---vim.keymap.set({'n', 't'}, '<A-S-l>', require('Navigator').tablast)
+---@usage ]]
+function Nav.tablast()
+    n.navi_tab('l')
 end
 
 return Nav

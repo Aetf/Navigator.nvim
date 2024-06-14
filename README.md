@@ -56,6 +56,16 @@ vim.keymap.set({'n', 't'}, '<A-p>', '<CMD>NavigatorPrevious<CR>')
 - [Tmux](https://github.com/numToStr/Navigator.nvim/wiki/Tmux-Integration)
 - [WezTerm](https://github.com/numToStr/Navigator.nvim/wiki/WezTerm-Integration)
 
+Note: for tmux, remember to add additional keybindings for tmux window switching if you wish to also smoothly switch tabpages with that:
+
+```
+is_vim="ps -o state= -o comm= -t '#{pane_tty}' \
+    | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?(view|n?vim?x?)(diff)?$'"
+bind-key -n 'M-p' if-shell "$is_vim" 'send-keys M-p'  'select-window -p'
+bind-key -n 'M-n' if-shell "$is_vim" 'send-keys M-n'  'select-window -n'
+bind-key -n 'M-|' if-shell "$is_vim" 'send-keys M-|'  'select-window -l'
+```
+
 #### Configuration (optional)
 
 Following options can be given when calling `setup({config})`. Below is the default configuration
